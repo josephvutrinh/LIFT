@@ -1,10 +1,30 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Profile({ user, onLogout, onGoToHistory, onGoToSplit, onGoToPrediction }) {
+export default function Profile({ user, onLogout, onDeleteAccount, onGoToHistory, onGoToSplit, onGoToPrediction }) {
   const name = user?.name || "Athlete";
   const email = user?.email || "unknown";
   const initial = name.trim().charAt(0).toUpperCase() || "A";
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Delete Account",
+      "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            onDeleteAccount && onDeleteAccount();
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-black">
@@ -68,10 +88,17 @@ export default function Profile({ user, onLogout, onGoToHistory, onGoToSplit, on
 
         <View className="mt-auto mb-12">
           <TouchableOpacity
-            className="bg-neutral-800 rounded-full py-3.5 items-center border border-neutral-700 active:bg-neutral-700"
+            className="bg-neutral-800 rounded-full py-3.5 items-center border border-neutral-700 active:bg-neutral-700 mb-3"
             onPress={onLogout}
           >
-            <Text className="text-red-400 font-semibold text-base">Log out</Text>
+            <Text className="text-neutral-300 font-semibold text-base">Log out</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            className="bg-red-500/10 border border-red-500/30 rounded-full py-3.5 items-center active:bg-red-500/20"
+            onPress={handleDeleteAccount}
+          >
+            <Text className="text-red-400 font-semibold text-base">Delete Account</Text>
           </TouchableOpacity>
         </View>
       </View>

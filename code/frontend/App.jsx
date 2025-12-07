@@ -1,7 +1,7 @@
 import "./global.css";
 import React, { useState } from "react";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Text, TouchableOpacity, View } from "react-native";
+import Constants from "expo-constants";
 
 import Login from "./screens/Login";
 import Signup from "./screens/Signup";
@@ -69,7 +69,8 @@ export default function App() {
         return;
       }
 
-      const response = await fetch(`${process.env.API_BASE_URL}/user`, {
+      const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+      const response = await fetch(`${API_BASE_URL}/user`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -82,8 +83,15 @@ export default function App() {
         setUser(null);
         setScreen("login");
       } else {
-        const data = await response.json();
-        alert(data.message || "Failed to delete account");
+        // Try to parse error response
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          alert(data.message || "Failed to delete account");
+        } else {
+          const text = await response.text();
+          alert(`Failed to delete account: ${response.status} - ${text.substring(0, 100)}`);
+        }
       }
     } catch (error) {
       alert("Error deleting account: " + error.message);
@@ -144,7 +152,7 @@ export default function App() {
     setWorkingSplit(JSON.parse(JSON.stringify(defaultSplit)));
   };
 
-  // Functions for managing the WORKING SPLIT (current week)
+  // Functions for managing the current split
   const addWorkingDay = (name) => {
     const trimmed = name.trim();
     if (!trimmed) return;
@@ -225,7 +233,7 @@ export default function App() {
       },
     ]);
 
-    // Reset working split to default template (deep copy)
+    // Reset working split to default template
     setWorkingSplit(JSON.parse(JSON.stringify(defaultSplit)));
     setCurrentWeekId(Date.now().toString(36));
   };
