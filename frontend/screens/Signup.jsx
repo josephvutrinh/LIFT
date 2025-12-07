@@ -1,14 +1,35 @@
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Constants from 'expo-constants';
+import axios from 'axios';
 
-export default function Signup({ onGoToLogin }) {
+const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+
+export default function Signup({ onGoToLogin, onAuthSuccess }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignup = () => {
-    console.log("Signing up with", { name, email, password });
+  const handleSignup = async () => {
+    if (!name || !email || !password) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/signup`, {
+        name,
+        email,
+        password,
+      });
+      console.log("Signup successful:", response.data);
+      const userData = response.data?.user ?? { name, email };
+      if (onAuthSuccess) {
+        onAuthSuccess(userData);
+      }
+    } catch (error) {
+      console.error("Signup error:", error.response ? error.response.data : error.message);
+    }
   };
 
   return (

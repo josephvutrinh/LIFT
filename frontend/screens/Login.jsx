@@ -1,14 +1,42 @@
 import { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Constants from 'expo-constants';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Login({ onGoToSignup }) {
+const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+
+export default function Login({ onGoToSignup, onAuthSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    // For now just log values; later you can hook this into real auth
-    console.log("Logging in with", { email, password });
+  const handleLogin = async () => {
+    if (!email || !password) {
+      return Alert.alert("Missing fields", "Please enter both email and password.");
+    }
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/login`, {
+        email,
+        password,
+      });
+
+      const { token, user } = response.data;
+
+      // 1. SECURELY SAVE THE TOKEN
+      await AsyncStorage.setItem('userToken', token); 
+      
+      // 2. Prepare user data and pass it up for global state management
+      const userData = user ?? { email };
+      if (onAuthSuccess) {
+        onAuthSuccess({ ...userData, token });
+      }
+    } catch (error) {
+      console.error('Login failed:', error.response?.data?.msg || error.message);
+      const errorMessage = error.response?.data?.msg || 'Login failed. Please check your credentials.';
+      Alert.alert('Login failed', errorMessage);
+    }
   };
 
   return (
