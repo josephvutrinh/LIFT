@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,11 +7,23 @@ import axios from 'axios';
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
 
+/**
+ * Provides UI for new users to create an account.
+ * Makes POST request to /api/auth/signup with name, email, and password.
+ * On success, calls onAuthSuccess to log the user in.
+ * 
+ * @param {function} onGoToLogin - Callback to navigate to login screen
+ * @param {function} onAuthSuccess - Callback when signup succeeds, receives user data
+ */
 export default function Signup({ onGoToLogin, onAuthSuccess }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  /**
+   * Handles signup form submission.
+   * Validates input, makes API call, and triggers auth success.
+   */
   const handleSignup = async () => {
     if (!name || !email || !password) {
       return;

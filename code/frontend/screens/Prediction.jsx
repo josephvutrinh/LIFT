@@ -1,12 +1,28 @@
+
 import { Text, TouchableOpacity, View, TextInput, Keyboard, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { predictPRWeeks } from '../utils/PredictionModel'; // Adjust path if needed
+/**
+ * Prediction.jsx - ML-Based PR Prediction Screen
+ * 
+ * Uses machine learning (linear regression) to predict when a user will
+ * achieve their target bench press one-rep max (1RM).
+ * @param {Array} logs - All workout logs
+ * @param {Array} split - Default split (to find bench press exercise)
+ * @param {function} onBackToProfile - Navigate back to profile
+ */
 
 export default function Prediction({ logs, split, onBackToProfile }) {
+  // User's target weight for 1RM prediction
   const [targetWeight, setTargetWeight] = useState('');
-  const [predictionResult, setPredictionResult] = useState(null); // null, number, or string error
+  
+  // Prediction result: null (no prediction yet), number (weeks), or string (error message)
+  const [predictionResult, setPredictionResult] = useState(null);
 
+  /**
+   * Handles prediction calculation when user submits target weight
+   */
   const handlePrediction = () => {
     Keyboard.dismiss(); // Hide keyboard
 
@@ -19,6 +35,13 @@ export default function Prediction({ logs, split, onBackToProfile }) {
     setPredictionResult(result);
   };
 
+  /**
+   * Renders the prediction result based on the algorithm's output.
+   * Handles three cases:
+   * 1. Not enough data (less than 2 weeks or 5 sets)
+   * 2. Unreliable prediction (negative or very slow progress)
+   * 3. Valid prediction (shows weeks needed or "Already Achieved")
+   */
   const renderPrediction = () => {
     if (predictionResult === null) return null;
 

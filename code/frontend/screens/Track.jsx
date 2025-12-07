@@ -1,3 +1,18 @@
+/**
+ * Uses the working split (current week's editable copy) and logs all sets
+ * with the current week ID for tracking purposes.
+ * @param {Array} split - Working split array with days and exercises
+ * @param {Array} logs - All workout logs
+ * @param {string} currentWeekId - ID of the current training week
+ * @param {function} onAddDay - Add a new day to working split
+ * @param {function} onDeleteDay - Remove a day from working split
+ * @param {function} onAddExercise - Add exercise to a day
+ * @param {function} onDeleteExercise - Remove exercise from a day
+ * @param {function} onAddSet - Log a new set
+ * @param {function} onDeleteSet - Remove a logged set
+ * @param {function} onSubmitWeek - Submit current week and reset for next week
+ */
+
 import { useMemo, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View, FlatList, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,22 +29,36 @@ export default function Track({
   onDeleteSet,
   onSubmitWeek,
 }) {
+  // Selected day ID for viewing/editing exercises
   const [selectedDayId, setSelectedDayId] = useState(split[0]?.id ?? null);
+  
+  // Input for adding a new day
   const [newDayName, setNewDayName] = useState("");
-  const [exerciseInputs, setExerciseInputs] = useState({}); // { [dayId]: name }
-  const [setInputs, setSetInputs] = useState({}); // { [exerciseId]: { reps, weight } }
+  
+  // Inputs for adding exercises to specific days
+  const [exerciseInputs, setExerciseInputs] = useState({});
+  
+  // Inputs for logging sets (reps and weight) for specific exercises
+  const [setInputs, setSetInputs] = useState({});
 
+  // Memoized selected day to prevent unnecessary recalculations
   const selectedDay = useMemo(
     () => split.find((d) => d.id === selectedDayId) ?? split[0],
     [split, selectedDayId],
   );
 
+  /**
+   * Adds a new day to the working split
+   */
   const handleAddDay = () => {
     if (!newDayName.trim()) return;
     onAddDay(newDayName.trim());
     setNewDayName("");
   };
 
+  /**
+   * Adds a new exercise to the specified day
+   */
   const handleAddExercise = (dayId) => {
     const name = (exerciseInputs[dayId] || "").trim();
     if (!name) return;
@@ -37,6 +66,9 @@ export default function Track({
     setExerciseInputs((prev) => ({ ...prev, [dayId]: "" }));
   };
 
+  /**
+   * Updates reps or weight input for a specific exercise
+   */
   const updateSetInput = (exerciseId, field, value) => {
     setSetInputs((prev) => ({
       ...prev,
@@ -48,6 +80,9 @@ export default function Track({
     }));
   };
 
+  /**
+   * Logs a set for the specified exercise with reps and weight
+   */
   const handleAddSet = (exerciseId) => {
     const data = setInputs[exerciseId];
     if (!data) return;
@@ -58,14 +93,23 @@ export default function Track({
     setSetInputs((prev) => ({ ...prev, [exerciseId]: { reps: "", weight: "" } }));
   };
 
+  /**
+   * Deletes a logged set
+   */
   const handleDeleteSet = (setId) => {
     onDeleteSet && onDeleteSet(setId);
   };
 
+  /**
+   * Deletes an exercise from a specific day
+   */
   const handleDeleteExercise = (dayId, exerciseId) => {
     onDeleteExercise && onDeleteExercise(dayId, exerciseId);
   };
 
+  /**
+   * Deletes a day and updates selected day if necessary
+   */
   const handleDeleteDay = (dayId) => {
     onDeleteDay && onDeleteDay(dayId);
     // If deleting the selected day, switch to first available day
@@ -119,7 +163,7 @@ export default function Track({
           </ScrollView>
         </View>
 
-        {/* Add day - Fixed */}
+        {/* Add day */}
         <View className="mb-4">
           <Text className="text-neutral-300 mb-2 text-sm">Add day</Text>
           <View className="flex-row items-center gap-2">
@@ -151,7 +195,7 @@ export default function Track({
           </View>
         )}
 
-        {/* Add exercise - Fixed */}
+        {/* Add exercise */}
         {selectedDay && (
           <View className="mb-4">
             <Text className="text-neutral-300 mb-2 text-sm">Add exercise</Text>

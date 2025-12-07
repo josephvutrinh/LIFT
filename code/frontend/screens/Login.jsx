@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,11 +7,22 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_BASE_URL = Constants.expoConfig.extra.API_BASE_URL;
+/**
+ * Provides UI for existing users to log into their accounts.
+ * Makes POST request to /api/auth/login with email and password.
+ * On success, stores JWT token and calls onAuthSuccess with user data.
+ * @param {function} onGoToSignup - Callback to navigate to signup screen
+ * @param {function} onAuthSuccess - Callback when login succeeds, receives user data with token
+ */
 
 export default function Login({ onGoToSignup, onAuthSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  /**
+   * Handles login form submission.
+   * Validates input, makes API call, stores token, and triggers auth success.
+   */
   const handleLogin = async () => {
     if (!email || !password) {
       return Alert.alert("Missing fields", "Please enter both email and password.");

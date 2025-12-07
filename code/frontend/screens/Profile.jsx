@@ -1,11 +1,25 @@
+
 import { Text, TouchableOpacity, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+/**
+ * User Profile Screen
+ * @param {Object} user - Current user object with name and email
+ * @param {function} onLogout - Callback to log out user
+ * @param {function} onDeleteAccount - Callback to delete user account
+ * @param {function} onGoToHistory - Navigate to History screen
+ * @param {function} onGoToSplit - Navigate to Split screen
+ * @param {function} onGoToPrediction - Navigate to Prediction screen
+ */
 
 export default function Profile({ user, onLogout, onDeleteAccount, onGoToHistory, onGoToSplit, onGoToPrediction }) {
   const name = user?.name || "Athlete";
   const email = user?.email || "unknown";
   const initial = name.trim().charAt(0).toUpperCase() || "A";
 
+  /**
+   * Shows confirmation dialog before deleting account.
+   * Warns user that action is irreversible.
+   */
   const handleDeleteAccount = () => {
     Alert.alert(
       "Delete Account",

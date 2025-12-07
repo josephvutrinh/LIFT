@@ -1,6 +1,17 @@
+/**
+ * NavBar.jsx - Bottom Navigation Bar Component
+ * 
+ * Displays a fixed bottom navigation bar with Track and Profile tabs.
+ * Highlights the active tab and allows navigation between main screens.
+ * 
+ * @param {string} current - Currently active screen name
+ * @param {function} onChange - Callback to change screen
+ */
+
 import { Text, TouchableOpacity, View } from "react-native";
 
 export default function NavBar({ current, onChange }) {
+  // Determine which tab should be highlighted
   const isProfile = current === "profile";
   const isTrack = current === "track" || current === "history";
 

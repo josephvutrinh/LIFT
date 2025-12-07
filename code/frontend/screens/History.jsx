@@ -1,8 +1,23 @@
+
 import { useMemo } from "react";
 import { SectionList, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+/**
+ * Displays all past workout sessions organized by submitted weeks.
+ * Shows each logged set with exercise name, day, reps, and weight.
+ * Uses SectionList to group logs by week for easy navigation.
+ * 
+ * @param {Array} split - Default split (used to lookup day/exercise names)
+ * @param {Array} logs - All workout logs with set data
+ * @param {Array} weeks - Array of submitted weeks
+ * @param {function} onBackToProfile - Navigate back to profile
+ */
 
 export default function History({ split, logs, weeks, onBackToProfile }) {
+  /**
+   * Groups logs by week and formats them for SectionList.
+   * Each section represents one submitted week.
+   */
   const sections = useMemo(() => {
     if (!weeks || weeks.length === 0) return [];
 
@@ -22,8 +37,14 @@ export default function History({ split, logs, weeks, onBackToProfile }) {
       .filter(Boolean);
   }, [weeks, logs]);
 
+  /**
+   * Looks up day name from split by day ID
+   */
   const getDayName = (dayId) => split.find((d) => d.id === dayId)?.name || dayId;
 
+  /**
+   * Looks up exercise name from split by exercise ID
+   */
   const getExerciseName = (exerciseId) => {
     for (const day of split) {
       const ex = day.exercises.find((e) => e.id === exerciseId);

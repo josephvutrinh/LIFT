@@ -1,6 +1,17 @@
 import { useState } from "react";
-import { SectionList, Text, TextInput, TouchableOpacity, View, FlatList, ScrollView, Alert } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, FlatList, ScrollView, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+/**
+ * This is the template editor - changes here don't affect the current week
+ * unless user explicitly chooses to update Track screen when saving.
+ * @param {Array} split - Default split template array
+ * @param {function} onBackToProfile - Navigate back to profile
+ * @param {function} onAddDay - Add day to default split
+ * @param {function} onRemoveDay - Remove day from default split
+ * @param {function} onAddExercise - Add exercise to day
+ * @param {function} onRemoveExercise - Remove exercise from day
+ * @param {function} onSaveAndUpdateTrack - Apply template changes to working split
+ */
 
 export default function Split({ 
   split, 
@@ -11,18 +22,29 @@ export default function Split({
   onRemoveExercise,
   onSaveAndUpdateTrack
 }) {
+  // Selected day for viewing/editing exercises
   const [selectedDayId, setSelectedDayId] = useState(split[0]?.id ?? null);
+  
+  // Input for new day name
   const [newDayName, setNewDayName] = useState("");
-  const [exerciseInputs, setExerciseInputs] = useState({}); // { [dayId]: name }
+  
+  // Inputs for adding exercises to specific days
+  const [exerciseInputs, setExerciseInputs] = useState({});
 
   const selectedDay = split.find((d) => d.id === selectedDayId) ?? split[0];
 
+  /**
+   * Adds a new day to the default split template
+   */
   const handleAddDay = () => {
     if (!newDayName.trim()) return;
     onAddDay(newDayName.trim());
     setNewDayName("");
   };
 
+  /**
+   * Adds an exercise to the specified day in default split
+   */
   const handleAddExercise = (dayId) => {
     const name = (exerciseInputs[dayId] || "").trim();
     if (!name) return;
@@ -30,6 +52,9 @@ export default function Split({
     setExerciseInputs((prev) => ({ ...prev, [dayId]: "" }));
   };
 
+  /**
+   * Deletes a day from the template and updates selected day if necessary
+   */
   const handleDeleteDay = (dayId) => {
     onRemoveDay && onRemoveDay(dayId);
     // If deleting the selected day, switch to first available day
@@ -41,6 +66,10 @@ export default function Split({
     }
   };
 
+  /**
+   * Shows confirmation dialog when saving.
+   * Asks user if they want to update the current week's working split.
+   */
   const handleSave = () => {
     Alert.alert(
       "Update Track?",
@@ -198,7 +227,7 @@ export default function Split({
           <Text className="text-neutral-500 text-sm">Add a day to start building your split.</Text>
         )}
 
-        {/* Save button - Fixed at bottom */}
+        {/* Save button */}
         <View className="py-12">
           <TouchableOpacity
             className="bg-emerald-500 rounded-full py-3.5 items-center active:bg-emerald-400"
