@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function Profile({ user, onLogout }) {
+export default function Profile({ user, onLogout, onGoToHistory, onGoToSplit, onGoToPrediction }) {
   const name = user?.name || "Athlete";
   const email = user?.email || "unknown";
   const initial = name.trim().charAt(0).toUpperCase() || "A";
@@ -31,14 +31,42 @@ export default function Profile({ user, onLogout }) {
           </View>
         </View>
 
-        <View className="bg-neutral-900/80 border border-neutral-800 rounded-3xl p-5 mt-3">
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={onGoToHistory}
+          className="bg-neutral-900/80 border border-neutral-800 rounded-3xl p-5 mt-3"
+        >
           <Text className="text-neutral-300 font-semibold mb-2 text-sm">Training summary</Text>
           <Text className="text-neutral-500 text-sm">
-            Stats and weekly volume will appear here once you start logging your lifts.
+            Tap to view your past workouts and weekly volume.
           </Text>
-        </View>
+        </TouchableOpacity>
 
-        <View className="mt-auto mb-10">
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={onGoToSplit}
+          className="bg-neutral-900/80 border border-neutral-800 rounded-3xl p-5 mt-3"
+        >
+          <Text className="text-neutral-300 font-semibold mb-2 text-sm">Split</Text>
+          <Text className="text-neutral-500 text-sm">
+            Tap to edit your split.
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={onGoToPrediction}
+          className="bg-neutral-900/80 border border-neutral-800 rounded-3xl p-5 mt-3"
+        >
+          <Text className="text-neutral-300 font-semibold mb-2 text-sm">Bench Prediction</Text>
+          <Text className="text-neutral-500 text-sm">
+            Tap to find out when your next bench press PR might be.
+          </Text>
+        </TouchableOpacity>
+
+        
+
+        <View className="mt-auto mb-12">
           <TouchableOpacity
             className="bg-neutral-800 rounded-full py-3.5 items-center border border-neutral-700 active:bg-neutral-700"
             onPress={onLogout}
