@@ -5,7 +5,7 @@ export default function NavBar({ current, onChange }) {
   const isTrack = current === "track" || current === "history";
 
   return (
-    <View className="absolute bottom-0 left-0 right-0 bg-black/95 border-t border-neutral-800 py-6 flex-row justify-between items-center">
+    <View className="absolute bottom-0 left-0 right-0 bg-black/95 border-t border-neutral-800 py-6 px-0 flex-row justify-between items-center">
       <TouchableOpacity
         className={`flex-1 items-center ${isTrack ? "" : "opacity-70"}`}
         onPress={() => onChange("track")}>
