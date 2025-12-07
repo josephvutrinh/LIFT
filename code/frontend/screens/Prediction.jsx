@@ -1,5 +1,6 @@
 import { Text, TouchableOpacity, View, TextInput, Keyboard, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
 import { predictPRWeeks } from '../utils/PredictionModel'; // Adjust path if needed
 
 export default function Prediction({ logs, split, onBackToProfile }) {
