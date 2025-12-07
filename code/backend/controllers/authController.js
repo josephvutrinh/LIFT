@@ -2,7 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// --- SIGN UP Logic ---
+// Sign up
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -32,7 +32,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// --- LOGIN Logic ---
+// Login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -73,4 +73,25 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// Delete user
+const deleteUser = async (req, res) => {
+  try {
+    // req.user.id comes from the auth middleware
+    const userId = req.user.id;
+
+    // Find and delete the user
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User deleted successfully' });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { registerUser, loginUser, deleteUser };
